@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     [Header("--- GameObject ---")]
     public GameObject StartUI;
+    public GameObject RedBirdDeco;
     public GameObject MapUI;
     public GameObject[] Texts;
     public GameObject RedBird;
@@ -63,26 +64,33 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ActiveUI()
     {
-        yield return new WaitForSeconds(0.5f);
+        while(RedBirdDeco.transform.position.x <= 10.0f) {
+            RedBirdDeco.transform.Translate(Time.deltaTime * 25.0f, 0, 0);
+
+            yield return null;
+        }
+        
 
         StartUI.SetActive(false);
+        RedBirdDeco.SetActive(false);
         MapUI.SetActive(true);
 
-        yield return new WaitForSeconds(0.5f);
-
-        RedBird.SetActive(true);
-
-        yield return new WaitForSeconds(1.0f);
+        // yield return new WaitForSeconds(1.0f);
         
         for(int i = 0; i < Items.Length; i++) {
             Items[i].SetActive(true);
         }
 
-        yield return new WaitForSeconds(0.3f);
-
         for(int i = 0; i < Texts.Length; i++) {
             Texts[i].SetActive(true);
         }
+
+        SetScoreText();
+        SetLifeText();
+
+        // yield return new WaitForSeconds(0.5f);
+
+        RedBird.SetActive(true);
 
     }
 
