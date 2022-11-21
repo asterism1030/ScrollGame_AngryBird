@@ -14,7 +14,8 @@ public class Item : MonoBehaviour
 
     List<ParticleSystem.Particle> enter = new List<ParticleSystem.Particle>();
 
-    void Start()
+
+    void Awake()
     {
         ps = GetComponent<ParticleSystem>();
         ps.GetComponent<Renderer>().sortingOrder = 5;
@@ -29,12 +30,18 @@ public class Item : MonoBehaviour
         int numEnter = ps.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
         
         for(int i = 0; i < numEnter; i++) {
+            if(GameManager.Instance == null) {
+                break;
+            }
+
             switch(itemType) {
                 case ItemType.gold :
                     GameManager.Instance.Gold += 10;
+                    GameManager.Instance.SetScoreText();
                     break;
                 case ItemType.heart :
                     GameManager.Instance.Heart += 1;
+                    GameManager.Instance.SetLifeText();
                     break;
             }
         }

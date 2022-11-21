@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class ControllRed : MonoBehaviour
 {
-    float speed = 5.0f;
+    float speed = 0.002f;
     float maxH = 4.25f;
-    float minH = -2.4f;
+    float minH = -3.5f;
+    float startH = 1.0f;
+
+    Vector3 targetPos;
 
     void Start()
     {
-        
+        targetPos = transform. position;
     }
 
     void Update()
@@ -18,22 +21,34 @@ public class ControllRed : MonoBehaviour
         Moving();
     }
 
-    void OnCollisionEnter(Collision col)
-    {
-        Debug.Log(col.gameObject.name);
+    // void OnCollisionEnter(Collision col)
+    // {
+    //     Debug.Log(col.gameObject.name);
 
-    }
+    // }
 
     // function
     void Moving()
     {
-        // 앵그리 버드는 상, 하 로만 움직임
-        // TODO) 화면 터치 위치에 따라 상하 이동하도록 수정
-        if(Input.GetAxis("Vertical") != 0) {
-            if(transform.position.y <= minH || transform.position.y >= maxH) {
-                return;
-            }
-            transform.Translate(0, Time.deltaTime * speed * Input.GetAxis("Vertical"), 0);
+        if(Input.GetMouseButtonDown(0)) {
+            Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            clickPos.x = transform.position.x;
+            clickPos.z = transform.position.z;
+            // Debug.Log(clickPos);
+            // Debug.Log(transform.position);
+            clickPos.y = (clickPos.y >= maxH) ? maxH : clickPos.y;
+
+            targetPos = clickPos;
+        }
+
+        transform.position = Vector3.Lerp(transform.position, targetPos, speed);
+
+        if(transform.position.y <= minH) {
+            // TODO) 효과
+            GameManager.Instance.Heart--;
+            GameManager.Instance.SetLifeText();
+            targetPos.y = startH;
         }
     }
+
 }
