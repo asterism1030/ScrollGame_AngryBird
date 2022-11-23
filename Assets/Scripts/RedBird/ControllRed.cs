@@ -46,6 +46,12 @@ public class ControllRed : MonoBehaviour
         if(transform.position.y <= minH) {
             // TODO) 효과
             GameManager.Instance.Heart--;
+
+            if(GameManager.Instance.Heart <= 0) {
+                transform.position = new Vector3(transform.position.x, startH, transform.position.z);
+                GameManager.Instance.GameOver();
+            }
+
             GameManager.Instance.SetLifeText();
             targetPos.y = startH;
         }

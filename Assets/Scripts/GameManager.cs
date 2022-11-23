@@ -15,9 +15,11 @@ public class GameManager : MonoBehaviour
     [Header("--- Text ---")]
     public Text Score;
     public Text Life;
+    public Text FinalScore;
 
     [Header("--- GameObject ---")]
     public GameObject StartUI;
+    public GameObject EndUI;
     public GameObject RedBirdDeco;
     public GameObject MapUI;
     public GameObject[] Texts;
@@ -59,39 +61,54 @@ public class GameManager : MonoBehaviour
 
     public void OnStartBtnClicked()
     {
-        StartCoroutine(ActiveUI());
+        StartCoroutine(ActiveGame(true));
     }
 
-    IEnumerator ActiveUI()
+    IEnumerator ActiveGame(bool isActive)
     {
-        while(RedBirdDeco.transform.position.x <= 10.0f) {
-            RedBirdDeco.transform.Translate(Time.deltaTime * 25.0f, 0, 0);
+        if(isActive == true) {
+            while(RedBirdDeco.transform.position.x <= 10.0f) {
+                RedBirdDeco.transform.Translate(Time.deltaTime * 25.0f, 0, 0);
 
-            yield return null;
+                yield return null;
+            }
+
+            RedBirdDeco.transform.position = new Vector3(-8.6f, 1.42f, 0.0f);
+            
+            StartUI.SetActive(false);
+            EndUI.SetActive(false);
         }
-        
 
-        StartUI.SetActive(false);
-        RedBirdDeco.SetActive(false);
-        MapUI.SetActive(true);
+        RedBirdDeco.SetActive(!isActive);
 
-        // yield return new WaitForSeconds(1.0f);
-        
+        MapUI.SetActive(isActive);
+        RedBird.SetActive(isActive);
+
         for(int i = 0; i < Items.Length; i++) {
-            Items[i].SetActive(true);
+            Items[i].SetActive(isActive);
         }
 
         for(int i = 0; i < Texts.Length; i++) {
-            Texts[i].SetActive(true);
+            Texts[i].SetActive(isActive);
         }
 
         SetScoreText();
         SetLifeText();
+    }
 
-        // yield return new WaitForSeconds(0.5f);
+    public void GameOver()
+    {
+        StartCoroutine(ActiveGame(false));
 
-        RedBird.SetActive(true);
+        EndUI.SetActive(true);
+        FinalScore.text = Score.text;
+        Gold = 0;
+        Heart = 3;
+    }
 
+    public void OnRestartClicked()
+    {
+        StartCoroutine(ActiveGame(true));
     }
 
 }
